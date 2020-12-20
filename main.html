@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Camera sample</title>
+  <style>
+    canvas,
+    video {
+      border: 1px solid gray;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>HTML5カメラc</h1>
+  <video id="camera"></video>
+  <canvas id="canvas" height="500" width="500"></canvas>
+
+  <script>
+    window.onload = async () => {
+      const video = document.querySelector("#camera");
+
+      const deviceInfos = await navigator.
+        mediaDevices.
+        enumerateDevices().then(function (devices) {
+          return devices.filter(d => d.kind == "videoinput")
+        });
+      console.log(deviceInfos)
+
+      /** カメラ設定 */
+      const constraints = {
+        audio: false,
+        video: {
+          // width: 300,
+          // height: 200,
+        }
+      };
+
+
+      /**
+       * カメラを<video>と同期
+       */
+      await navigator.mediaDevices.getUserMedia(constraints)
+        .then((stream) => {
+          video.srcObject = stream;
+          video.onloadedmetadata = (e) => {
+            video.play();
+          };
+        })
+        .catch((err) => {
+          console.log(err.name + ": " + err.message);
+        });
+
+      const worker = new Worker('my-worker.js');
+      const stream = video.captureStream();
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new ImageCapture(track);
+      const canvas = document.getElementById('canvas');
+      const offscreen = canvas.transferControlToOffscreen();
+
+      worker.postMessage({ offscreen }, [offscreen]);
+
+      const draw = async () => {
+        await imageCapture.grabFrame().then(imageBitmap => {
+          worker.postMessage({ imageBitmap }, [imageBitmap]);
+        });
+
+        requestAnimationFrame(draw);
+      };
+
+      video.onplay = () => {
+        requestAnimationFrame(draw);
+      };
+
+    };
+
+  </script>
+</body>
+
+</html>
