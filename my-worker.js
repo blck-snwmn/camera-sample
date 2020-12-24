@@ -33,7 +33,7 @@ Promise.all([
             context.drawImage(imageBitmap, 0, 0);
             let frame = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height)
             let wasmframe = do_no_action(frame.data)
-            let u8ca = new Uint8ClampedArray(memory.buffer, wasmframe.pointer(), wasmframe.size())
+            let u8ca = Uint8ClampedArray.from(wasmframe)
             let image = new ImageData(u8ca, imageBitmap.width, imageBitmap.height)
             context_other.putImageData(image, 0, 0)
         }
