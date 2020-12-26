@@ -28,13 +28,9 @@ Promise.all([
     addEventListener('message', event => {
         if (event.data.imageBitmap && context && context_other) {
             const imageBitmap = event.data.imageBitmap
-            // console.log(cs.nop(event.data.imageBitmap))
-            // context.drawImage(cs.nop(event.data.imageBitmap), 0, 0);
             context.drawImage(imageBitmap, 0, 0);
             let frame = context.getImageData(0, 0, imageBitmap.width, imageBitmap.height)
-            let wasmframe = do_no_action(frame.data)
-            let u8ca = Uint8ClampedArray.from(wasmframe)
-            let image = new ImageData(u8ca, imageBitmap.width, imageBitmap.height)
+            let image = do_no_action(frame.data, frame.height, frame.width)
             context_other.putImageData(image, 0, 0)
         }
     });
