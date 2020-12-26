@@ -13,9 +13,24 @@
 </head>
 
 <body>
-    <video id="camera"></video>
-    <canvas id="canvas" height="500" width="500"></canvas>
-    <canvas id="canvas2" height="500" width="500"></canvas>
+    <table>
+        <tr>
+            <th>original</th>
+        </tr>
+        <tr>
+            <td><video id="camera"></video></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th>copy[webworker]</th>
+            <th>sepia[wasm][webworker]</th>
+        </tr>
+        <tr>
+            <td><canvas id="canvas" height="200" width="300"></canvas></td>
+            <td><canvas id="canvas2" height="200" width="300"></canvas></td>
+        </tr>
+    </table>
     <script src="./bundle.js"></script>
 </body>
 
